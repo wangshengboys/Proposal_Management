@@ -1,21 +1,23 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
+import DashboardPage from './pages/DashboardPage';
 
 function App() {
+  const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || '380188207405-lv0jg4psp4gp99cqiu3c8e67uig38jej.apps.googleusercontent.com';
+
   return (
-    <Router>
-      <Routes>
-        {/* Jika user mengakses root '/', otomatis diarahkan (redirect) ke /login */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        
-        {/* Jalur Halaman Login */}
-        <Route path="/login" element={<LoginPage />} />
-        
-        {/* Jalur Halaman Sign Up */}
-        <Route path="/register" element={<SignupPage />} />
-      </Routes>
-    </Router>
+    <GoogleOAuthProvider clientId={clientId}>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<SignupPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
+        </Routes>
+      </Router>
+    </GoogleOAuthProvider>
   );
 }
 
