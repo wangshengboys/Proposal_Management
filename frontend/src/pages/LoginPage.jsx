@@ -7,6 +7,8 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
+  const [formData, setFormData] = useState({ email: '', password: '' });
+
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
         const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/google`, {
@@ -14,7 +16,11 @@ const LoginPage = () => {
         });
         if (res.data.success) {
             localStorage.setItem('token', res.data.token);
-            navigate('/dashboard');
+            if (res.data.user.is_profile_complete) {
+                navigate('/dashboard');
+            } else {
+                navigate('/complete-profile');
+            }
         }
     } catch (error) {
         console.error('Login gagal', error);
@@ -22,9 +28,22 @@ const LoginPage = () => {
     }
   };
 
-  const handleManualLogin = (e) => {
+  const handleManualLogin = async (e) => {
     e.preventDefault();
-    console.log("Login manual ditekan");
+    try {
+        const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/login`, formData);
+        if (res.data.success) {
+            localStorage.setItem('token', res.data.token);
+            if (res.data.user.is_profile_complete) {
+                navigate('/dashboard');
+            } else {
+                navigate('/complete-profile');
+            }
+        }
+    } catch (error) {
+        console.error(error);
+        alert(error.response?.data?.error || "Gagal login");
+    }
   };
 
   return (
@@ -67,8 +86,10 @@ const LoginPage = () => {
             <form onSubmit={handleManualLogin} className="space-y-4">
               <div>
                 <input
-                  type="text"
-                  placeholder="Username"
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => setFormData({...formData, email: e.target.value})}
+                  placeholder="Email"
                   className="w-full px-4 py-3 bg-gray-100 border border-transparent rounded-xl focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all text-sm text-gray-700 placeholder-gray-400"
                 />
               </div>
@@ -77,6 +98,8 @@ const LoginPage = () => {
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
+                  value={formData.password}
+                  onChange={(e) => setFormData({...formData, password: e.target.value})}
                   placeholder="Password"
                   className="w-full pl-4 pr-12 py-3 bg-gray-100 border border-transparent rounded-xl focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all text-sm text-gray-700 placeholder-gray-400"
                 />
