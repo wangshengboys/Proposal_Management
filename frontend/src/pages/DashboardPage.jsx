@@ -5,6 +5,7 @@ import UserManagementView from '../components/dashboard/UserManagementView';
 import PengusulView from '../components/dashboard/PengusulView';
 import ProfileView from '../components/dashboard/ProfileView';
 import ApprovalView from '../components/dashboard/ApprovalView';
+import RevisiView from '../components/dashboard/RevisiView';
 
 const DashboardPage = () => {
   const [user, setUser] = useState(null);
@@ -140,12 +141,7 @@ const DashboardPage = () => {
           {activeTab === 'approval' && <ApprovalView user={user} />}
           {activeTab === 'profil' && <ProfileView user={user} setUser={setUser} />}
           {activeTab === 'pengusul' && <PengusulView />}
-          {activeTab === 'revisi' && (
-            <div className="text-center py-20 bg-white rounded-2xl border border-gray-200 shadow-sm">
-              <h3 className="text-xl font-medium text-gray-900 mb-2">Belum Ada Revisi</h3>
-              <p className="text-gray-500">Saat ini tidak ada proposal Anda yang memerlukan revisi.</p>
-            </div>
-          )}
+          {activeTab === 'revisi' && <RevisiView />}
         </div>
       </div>
     </div>

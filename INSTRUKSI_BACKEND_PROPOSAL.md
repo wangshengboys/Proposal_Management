@@ -143,7 +143,14 @@ Backend diharapkan menyediakan *endpoints* berikut di `routes/proposalRoutes.js`
 - **Metode**: `GET /api/proposals/:id`
 - **Tugas**: Mengambil data lengkap proposal, termasuk array `anggota`, `mitra`, `rab`, dan `trackingHistory`. Lakukan validasi otorisasi (apakah user ini berhak melihat ID proposal ini).
 
-### 4. Melakukan Review / Approval (Khusus Approval Roles)
+### 4. Mengedit / Memperbaiki Proposal (Saat Revisi)
+- **Metode**: `PUT /api/proposals/:id`
+- **Tugas**: 
+  1. Dosen tidak boleh disuruh mengisi ulang dari awal! Saat dosen menekan tombol "Perbaiki Proposal", Frontend akan memanggil `GET /api/proposals/:id` untuk mengisi otomatis (*pre-fill*) form dengan data lama.
+  2. Saat di-*submit*, Frontend akan memanggil `PUT /api/proposals/:id` dengan payload JSON yang sudah direvisi.
+  3. Backend harus mengubah `statusSaatIni` kembali menjadi `Menunggu Kaprodi` (atau status awal) agar siklus persetujuan diulang kembali, dan pastikan `req.user._id` adalah pemilik sah dari proposal tersebut.
+
+### 5. Melakukan Review / Approval (Khusus Approval Roles)
 - **Metode**: `PUT /api/proposals/:id/review`
 - **Body**: `{ action: 'approve' | 'reject' | 'revise', note: 'Alasan lengkap...' }`
 - **Tugas**: 
