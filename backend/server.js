@@ -18,10 +18,15 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
-// Konfigurasi MongoDB
+// Koneksi ke MongoDB
 mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log('✅ Terhubung ke MongoDB via Mongoose'))
-    .catch(err => console.error('❌ Gagal terhubung ke MongoDB:', err));
+  .then(() => {
+    console.log('✅ Terhubung ke MongoDB via Mongoose');
+    // Drop old index if exists to avoid E11000 duplicate key error on null google_id
+    mongoose.connection.collection('users').dropIndex('google_id_1')
+      .catch(() => {});
+  })
+  .catch(err => console.error('Koneksi MongoDB gagal:', err));
 
 // Routes
 app.use('/api/auth', authRoutes);

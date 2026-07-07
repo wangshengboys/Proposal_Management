@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import SuperAdminView from '../components/dashboard/SuperAdminView';
+import UserManagementView from '../components/dashboard/UserManagementView';
 import PengusulView from '../components/dashboard/PengusulView';
 import ProfileView from '../components/dashboard/ProfileView';
+import ApprovalView from '../components/dashboard/ApprovalView';
 
 const DashboardPage = () => {
   const [user, setUser] = useState(null);
-  const [activeTab, setActiveTab] = useState('pengusul'); // Default tab
+  const [activeTab, setActiveTab] = useState(''); 
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -30,12 +31,21 @@ const DashboardPage = () => {
             return;
         }
 
-        setUser(res.data.user);
+        const userData = res.data.user;
+        setUser(userData);
         
-        // If superadmin, default tab to superadmin
-        if (res.data.user.role === 'superadmin') {
-           setActiveTab('superadmin');
+        // Determine default tab based on role
+        if (userData.role === 'superadmin') {
+           setActiveTab('management');
+        } else if (userData.role === 'admin') {
+           setActiveTab('approval');
+        } else if (['kaprodi', 'fakultas', 'lppm'].includes(userData.role)) {
+           setActiveTab('approval');
+        } else {
+           // dosen
+           setActiveTab('pengusul');
         }
+
       } catch (error) {
         console.error('Gagal mengambil data user', error);
         localStorage.removeItem('token');
@@ -50,7 +60,10 @@ const DashboardPage = () => {
     navigate('/login');
   };
 
-  if (!user) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  if (!user || !activeTab) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+
+  const isApprovalRole = ['admin', 'kaprodi', 'fakultas', 'lppm'].includes(user.role);
+  const isDosenRole = user.role.includes('dosen');
 
   return (
     <div className="flex h-screen bg-gray-50 font-sans overflow-hidden">
@@ -66,23 +79,25 @@ const DashboardPage = () => {
         </div>
 
         <nav className="flex-1 px-4 space-y-2 overflow-y-auto">
-          {user.role === 'superadmin' && (
+          {['superadmin', 'admin'].includes(user.role) && (
             <button 
-              onClick={() => setActiveTab('superadmin')}
-              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors ${activeTab === 'superadmin' ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'}`}
+              onClick={() => setActiveTab('management')}
+              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors ${activeTab === 'management' ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'}`}
             >
               Manajemen Akun
             </button>
           )}
 
-          <button 
-            onClick={() => setActiveTab('profil')}
-            className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors ${activeTab === 'profil' ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'}`}
-          >
-            Profil Anda
-          </button>
+          {isApprovalRole && (
+            <button 
+              onClick={() => setActiveTab('approval')}
+              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors ${activeTab === 'approval' ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'}`}
+            >
+              {user.role === 'admin' ? 'Pantau Proposal' : 'Dashboard Persetujuan'}
+            </button>
+          )}
 
-          {user.role !== 'superadmin' && (
+          {isDosenRole && (
             <>
               <button 
                 onClick={() => setActiveTab('pengusul')}
@@ -99,6 +114,13 @@ const DashboardPage = () => {
               </button>
             </>
           )}
+
+          <button 
+            onClick={() => setActiveTab('profil')}
+            className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors ${activeTab === 'profil' ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'}`}
+          >
+            Profil Anda
+          </button>
         </nav>
 
         <div className="p-4 border-t border-gray-200">
@@ -114,7 +136,8 @@ const DashboardPage = () => {
       {/* Main Content Area */}
       <div className="flex-1 overflow-y-auto p-8">
         <div className="max-w-6xl mx-auto">
-          {activeTab === 'superadmin' && <SuperAdminView />}
+          {activeTab === 'management' && <UserManagementView user={user} />}
+          {activeTab === 'approval' && <ApprovalView user={user} />}
           {activeTab === 'profil' && <ProfileView user={user} setUser={setUser} />}
           {activeTab === 'pengusul' && <PengusulView />}
           {activeTab === 'revisi' && (

@@ -2,7 +2,13 @@ const User = require('../models/User');
 
 exports.getAllUsers = async (req, res) => {
     try {
-        const users = await User.find({}, '-__v').sort({ createdAt: -1 });
+        let filter = {};
+        // Jika yang request admin, sembunyikan superadmin
+        if (req.user.role === 'admin') {
+            filter.role = { $ne: 'superadmin' };
+        }
+
+        const users = await User.find(filter, '-__v').sort({ createdAt: -1 });
         res.json({ success: true, data: users });
     } catch (error) {
         console.error('Error get users:', error);
@@ -10,25 +16,25 @@ exports.getAllUsers = async (req, res) => {
     }
 };
 
-exports.updateUserRole = async (req, res) => {
+exports.deleteUser = async (req, res) => {
     try {
         const { id } = req.params;
-        const { role } = req.body;
+        const targetUser = await User.findById(id);
 
-        const validRoles = ['superadmin', 'admin', 'dosen_tetap', 'dosen_lb', 'kaprodi', 'fakultas', 'lppm'];
-        if (!validRoles.includes(role)) {
-            return res.status(400).json({ error: 'Role tidak valid' });
-        }
-
-        const user = await User.findByIdAndUpdate(id, { role }, { new: true });
-        if (!user) {
+        if (!targetUser) {
             return res.status(404).json({ error: 'Pengguna tidak ditemukan' });
         }
 
-        res.json({ success: true, message: 'Role berhasil diperbarui', data: user });
+        // Admin tidak bisa menghapus superadmin
+        if (req.user.role === 'admin' && targetUser.role === 'superadmin') {
+            return res.status(403).json({ error: 'Anda tidak memiliki akses menghapus Super Admin' });
+        }
+
+        await User.findByIdAndDelete(id);
+        res.json({ success: true, message: 'Akun berhasil dihapus' });
     } catch (error) {
-        console.error('Error update role:', error);
-        res.status(500).json({ error: 'Gagal memperbarui role' });
+        console.error('Error delete user:', error);
+        res.status(500).json({ error: 'Gagal menghapus akun' });
     }
 };
 
@@ -123,5 +129,66 @@ exports.updateMyPassword = async (req, res) => {
     } catch (error) {
         console.error('Error update password:', error);
         res.status(500).json({ error: 'Gagal merubah password' });
+    }
+};
+
+exports.createManagedUser = async (req, res) => {
+    try {
+        const { name, email, password, role, program_studi, fakultas } = req.body;
+        
+        const validRoles = ['admin', 'kaprodi', 'fakultas', 'lppm'];
+        if (!validRoles.includes(role)) {
+            return res.status(400).json({ error: 'Role tidak valid untuk pembuatan manual.' });
+        }
+
+        // Admin tidak boleh membuat admin lain
+        if (req.user.role === 'admin' && role === 'admin') {
+            return res.status(403).json({ error: 'Admin tidak memiliki hak akses membuat akun Admin lain.' });
+        }
+
+        // Validasi ketersediaan Kaprodi
+        if (role === 'kaprodi') {
+            if (!program_studi) return res.status(400).json({ error: 'Program Studi wajib diisi untuk Kaprodi' });
+            const existing = await User.findOne({ role: 'kaprodi', program_studi });
+            if (existing) return res.status(400).json({ error: `Akun Kaprodi untuk ${program_studi} sudah terdaftar` });
+        }
+
+        // Validasi ketersediaan Fakultas
+        if (role === 'fakultas') {
+            if (!fakultas) return res.status(400).json({ error: 'Fakultas wajib diisi' });
+            const existing = await User.findOne({ role: 'fakultas', fakultas });
+            if (existing) return res.status(400).json({ error: `Akun Fakultas untuk ${fakultas} sudah terdaftar` });
+        }
+
+        // Validasi ketersediaan LPPM
+        if (role === 'lppm') {
+            const existing = await User.findOne({ role: 'lppm' });
+            if (existing) return res.status(400).json({ error: 'Akun LPPM maksimal hanya boleh 1 (satu) di dalam sistem.' });
+        }
+
+        // Cek apakah email sudah dipakai
+        let user = await User.findOne({ email });
+        if (user) {
+            return res.status(400).json({ error: 'Email sudah terdaftar' });
+        }
+
+        // Hashing password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        user = await User.create({
+            name,
+            email,
+            password: hashedPassword,
+            role,
+            program_studi: role === 'kaprodi' ? program_studi : undefined,
+            fakultas: role === 'fakultas' ? fakultas : undefined,
+            is_profile_complete: true // Akun management ini tidak isi NIDN dsb
+        });
+
+        res.status(201).json({ success: true, message: `Akun ${role} berhasil dibuat.`, data: user });
+    } catch (error) {
+        console.error('Error create managed user:', error);
+        res.status(500).json({ error: 'Gagal membuat akun' });
     }
 };
