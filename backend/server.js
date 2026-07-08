@@ -6,6 +6,8 @@ require('dotenv').config();
 
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
+const proposalRoutes = require('./routes/proposalRoutes');
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -17,6 +19,8 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(cookieParser());
+// Serve uploaded files
+app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
 
 // Koneksi ke MongoDB
 mongoose.connect(process.env.MONGO_URI)
@@ -31,6 +35,7 @@ mongoose.connect(process.env.MONGO_URI)
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/proposals', proposalRoutes);
 
 // Jalankan Server
 app.listen(PORT, () => {
