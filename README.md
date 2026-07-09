@@ -45,36 +45,6 @@ Aplikasi web untuk mengelola pengajuan proposal penelitian, peninjauan, dan pers
 - **LPPM**: validasi akhir proposal.
 - **Admin Unit**: membuat akun Kaprodi/Fakultas/LPPM dan memantau proposal.
 
-## Struktur Root Folder
-
-Proposal_Management
-├── `backend/`
-│   ├── `controllers/` - logika request handler API
-│   ├── `middleware/` - otentikasi dan validasi request
-│   ├── `models/` - schema Mongoose untuk Proposal dan User
-│   ├── `routes/` - endpoint API untuk auth, proposal, user
-│   ├── `public/uploads/` - penyimpanan file upload
-│   ├── `create_collections.js`
-│   ├── `seed.js`
-│   ├── `server.js`
-│   ├── `test-db.js`
-│   └── `package.json`
-├── `frontend/`
-│   ├── `src/`
-│   │   ├── `components/`
-│   │   │   ├── `dashboard/` - komponen tampilan dashboard per peran
-│   │   │   ├── `proposal/` - langkah form pengajuan proposal
-│   │   ├── `pages/` - halaman aplikasi (Login, Dashboard, Proposal Form)
-│   │   ├── `App.jsx`
-│   │   ├── `main.jsx`
-│   │   ├── `index.css`
-│   │   └── `App.css`
-│   ├── `public/`
-│   ├── `package.json`
-│   ├── `vite.config.js`
-│   └── `eslint.config.js`
-├── `README.md`
-
 ## Teknologi yang Digunakan
 - Frontend: React, Vite, Tailwind CSS
 - Backend: Node.js, Express, Mongoose
@@ -147,16 +117,6 @@ npm run dev
   ![Detail Proposal Admin](image-4.png)
 - Dashboard Pengusul
   ![Dashboard Pengusul](image-5.png)
-
-### Screenshot Form Pengusul
-- Langkah pengisian form proposal
-  ![Form Pengisian 1](Screenshot 2026-07-09 222319.png)
-  ![Form Pengisian 2](Screenshot 2026-07-09 222431.png)
-  ![Form Pengisian 3](Screenshot 2026-07-09 222509.png)
-  ![Form Pengisian 4](Screenshot 2026-07-09 222558.png)
-  ![Form Pengisian 5](Screenshot 2026-07-09 222609.png)
-
-> Semua screenshot berada di root folder proyek dan ditampilkan langsung di README.md.
 
 ## Hak Cipta
 
