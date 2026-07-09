@@ -1,90 +1,166 @@
 # Sistem Manajemen Proposal Penelitian
 
-Aplikasi berbasis web untuk memfasilitasi pengajuan, peninjauan, dan pengelolaan proposal penelitian secara hierarkis (Dosen -> Kaprodi -> Fakultas -> LPPM).
+Aplikasi web untuk mengelola pengajuan proposal penelitian, peninjauan, dan persetujuan secara berjenjang antara Dosen, Kaprodi, Fakultas, dan LPPM.
+
+## Ringkasan Proyek
+
+- Tujuan: memfasilitasi alur proposal penelitian dari pengajuan dosen hingga validasi akhir oleh LPPM.
+- Fitur utama:
+  - Form pengajuan proposal lengkap (anggota, mitra, RAB, upload PDF)
+  - Dashboard per peran pengguna
+  - Alur persetujuan bertingkat dengan opsi setuju, revisi, dan tolak
+  - Manajemen akun admin unit, Kaprodi, Fakultas, dan LPPM
+  - Otentikasi JWT dan Google OAuth2
+
+## Arsitektur dan Alur Proyek
+
+### Struktur Arsitektur
+
+- `backend/`: API server Node.js + Express + Mongoose
+- `frontend/`: aplikasi React + Vite + Tailwind CSS
+- `public/uploads/`: penyimpanan file upload dokumen dalam server lokal
+
+### Alur Persetujuan Proposal
+
+1. **Dosen** membuat proposal dan mengunggah dokumen.
+   - Status awal: `Menunggu Kaprodi`
+2. **Kaprodi** meninjau proposal.
+   - Bisa memilih: `Setuju`, `Revisi`, `Tolak`
+   - Jika setuju, status berubah menjadi `Menunggu Fakultas`
+3. **Fakultas** meninjau proposal setelah persetujuan Kaprodi.
+   - Jika setuju, status berubah menjadi `Menunggu LPPM`
+   - Jika revisi, proposal kembali ke Dosen
+4. **LPPM** melakukan validasi akhir.
+   - Jika setuju, status: `Disetujui LPPM`
+   - Jika revisi atau ditolak, proposal kembali ke Dosen
+5. **Revisi**
+   - Proposal yang diminta revisi oleh Kaprodi/Fakultas/LPPM dikembalikan ke Dosen.
+   - Setelah Dosen memperbaiki, alur kembali ke `Menunggu Kaprodi`.
+
+### Peran Pengguna Utama
+
+- **Dosen**: mengajukan proposal, melihat status, mengunggah kembali revisi.
+- **Kaprodi**: meninjau proposal jurusan dan mengirim keputusan ke Fakultas.
+- **Fakultas**: meninjau proposal fakultas dan meneruskan persetujuan ke LPPM.
+- **LPPM**: validasi akhir proposal.
+- **Admin Unit**: membuat akun Kaprodi/Fakultas/LPPM dan memantau proposal.
+
+## Struktur Root Folder
+
+Proposal_Management
+├── `backend/`
+│   ├── `controllers/` - logika request handler API
+│   ├── `middleware/` - otentikasi dan validasi request
+│   ├── `models/` - schema Mongoose untuk Proposal dan User
+│   ├── `routes/` - endpoint API untuk auth, proposal, user
+│   ├── `public/uploads/` - penyimpanan file upload
+│   ├── `create_collections.js`
+│   ├── `seed.js`
+│   ├── `server.js`
+│   ├── `test-db.js`
+│   └── `package.json`
+├── `frontend/`
+│   ├── `src/`
+│   │   ├── `components/`
+│   │   │   ├── `dashboard/` - komponen tampilan dashboard per peran
+│   │   │   ├── `proposal/` - langkah form pengajuan proposal
+│   │   ├── `pages/` - halaman aplikasi (Login, Dashboard, Proposal Form)
+│   │   ├── `App.jsx`
+│   │   ├── `main.jsx`
+│   │   ├── `index.css`
+│   │   └── `App.css`
+│   ├── `public/`
+│   ├── `package.json`
+│   ├── `vite.config.js`
+│   └── `eslint.config.js`
+├── `README.md`
 
 ## Teknologi yang Digunakan
-- **Frontend**: React + Vite + Tailwind CSS
-- **Backend**: Node.js + Express.js + Mongoose
-- **Database**: MongoDB
-- **Autentikasi**: JSON Web Token (JWT) + Google OAuth2
-- **File Upload**: Multer (Local File System)
+- Frontend: React, Vite, Tailwind CSS
+- Backend: Node.js, Express, Mongoose
+- Database: MongoDB
+- Autentikasi: JWT, Google OAuth2
+- File upload: Multer (local filesystem)
 
-## Alur Persetujuan Proposal
-1. **Pengajuan (Dosen)**: Dosen mengajukan proposal (beserta RAB, rincian anggota, mitra, dan PDF dokumen). Status: `Menunggu Kaprodi`.
-2. **Review Kaprodi**: Kaprodi dapat menyetujui, meminta revisi, atau menolak. Status: `Menunggu Fakultas`.
-3. **Review Fakultas**: Fakultas meninjau dan memberikan keputusan. Status: `Menunggu LPPM`.
-4. **Review LPPM**: Validasi akhir. Status: `Disetujui LPPM` atau ditolak/revisi.
-5. **Revisi**: Jika kaprodi/fakultas/lppm meminta revisi, proposal kembali ke Dosen. Saat Dosen memperbaikinya, status akan kembali berulang dari tahap 1 (`Menunggu Kaprodi`).
-
-## Panduan Instalasi (Development)
-
-### Prasyarat
-- Node.js (v18 atau lebih baru disarankan)
-- MongoDB Server berjalan di `localhost:27017`
+## Instalasi dan Jalankan
 
 ### 1. Setup Backend
 ```bash
 cd backend
 npm install
 ```
-Buat file `.env` di dalam folder `backend/` dengan struktur:
+
+Buat file `.env` di folder `backend/`:
 ```env
 PORT=3000
 MONGO_URI=mongodb://localhost:27017/ProposalManagement
 JWT_SECRET=rahasia_super_aman
 GOOGLE_CLIENT_ID=client_id_anda
 ```
-Jalankan server backend:
+
+Jalankan backend:
 ```bash
 npm run dev
 ```
 
 ### 2. Setup Frontend
-Buka terminal baru:
 ```bash
 cd frontend
 npm install
 ```
-Buat file `.env` di dalam folder `frontend/` dengan struktur:
+
+Buat file `.env` di folder `frontend/`:
 ```env
 VITE_API_URL=http://localhost:3000
 VITE_GOOGLE_CLIENT_ID=client_id_anda
 ```
-Jalankan development server:
+
+Jalankan frontend:
 ```bash
 npm run dev
 ```
 
-### Catatan Penting
-- Admin Unit dapat mengakses `/admin` untuk mendaftarkan akun Kaprodi, Fakultas, dan LPPM secara manual.
-- Password default untuk pengguna yang didaftarkan secara manual adalah: `password123`.
+## Catatan Penting
+- Admin Unit dapat membuat akun Kaprodi, Fakultas, dan LPPM.
+- Password default akun yang dibuat manual: `password123`.
+- Pastikan MongoDB berjalan di `localhost:27017`.
 
+## Alur Pengembangan
 
-### Dokumentasi
-Dashboard Super Admin
-![alt text](image.png)
+1. Backend menangani API auth, proposal, user, dan upload file.
+2. Frontend menampilkan halaman login, dashboard, form proposal, dan review status.
+3. Setiap keputusan reviewer memperbarui status proposal di database.
+4. Proposal revisi kembali ke Dosen dan alur dimulai ulang.
 
-Super Admin Bisa Menambahkan / Membuat Akun Admin Unit / Kaprodi / Fakultas / LPPM
-![alt text](image-1.png)
+## Dokumentasi Tampilan
 
-Dashboard Admin Unit Bisa Melihat Proposal Yang Masuk namun tidak bisa memberikan Persetujuan
-![alt text](image-2.png)
+### Screenshot Utama
+- Dashboard Super Admin
+  ![Dashboard Super Admin](image.png)
+- Halaman pembuatan akun admin unit / Kaprodi / Fakultas / LPPM
+  ![Manajemen Akun Admin](image-1.png)
+- Dashboard Admin Unit
+  ![Dashboard Admin Unit](image-2.png)
+- Form pembuatan akun Kaprodi / Fakultas / LPPM
+  ![Buat Akun Kaprodi/Fakultas/LPPM](image-3.png)
+- Detail proposal di akun admin
+  ![Detail Proposal Admin](image-4.png)
+- Dashboard Pengusul
+  ![Dashboard Pengusul](image-5.png)
 
-Admin Unit Juga bisa membuat akun kaprodi,fakultas,lppm
-akun kaprodi hanya bisa dibuat 1 sesuai jurusan, (misal jurusan ada 7 maka bisa ada 7 akun kaprodi untuk masing masing jurusan)
-begitu juga dengan akun fakultas(misal fakultas ada 3 maka bisa ada 3 akun fakultas untuk masing masing fakultas)
-akun lppm hanya bisa dibuat 1
-![alt text](image-3.png)
+### Screenshot Form Pengusul
+- Langkah pengisian form proposal
+  ![Form Pengisian 1](Screenshot 2026-07-09 222319.png)
+  ![Form Pengisian 2](Screenshot 2026-07-09 222431.png)
+  ![Form Pengisian 3](Screenshot 2026-07-09 222509.png)
+  ![Form Pengisian 4](Screenshot 2026-07-09 222558.png)
+  ![Form Pengisian 5](Screenshot 2026-07-09 222609.png)
 
-Tampilan detail proposal dari akun admin
-!["alt text"](image-4.png)
+> Semua screenshot berada di root folder proyek dan ditampilkan langsung di README.md.
 
-tampilan Dashboard Pengusul
-![alt text](image-5.png)
+## Hak Cipta
 
-Form Isian Pengusul
-![alt text](<Screenshot 2026-07-09 222319.png>)
-![alt text](<Screenshot 2026-07-09 222431.png>)
-![alt text](<Screenshot 2026-07-09 222509.png>)
-![alt text](<Screenshot 2026-07-09 222558.png>)
-![alt text](<Screenshot 2026-07-09 222609.png>)
+Kelompok 1
+1. BINTANG TIMUR - 123103025
+2. Fakhri Andika - 124103055
+
