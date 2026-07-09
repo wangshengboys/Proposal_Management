@@ -117,6 +117,13 @@ npm run dev
   ![Detail Proposal Admin](image-4.png)
 - Dashboard Pengusul
   ![Dashboard Pengusul](image-5.png)
+  Form Pengisian pengusul
+  ![alt text](<Screenshot 2026-07-09 222609-1.png>) 
+  ![alt text](<Screenshot 2026-07-09 222319-1.png>) 
+  ![alt text](<Screenshot 2026-07-09 222431-1.png>) 
+  ![alt text](<Screenshot 2026-07-09 222509-1.png>) 
+  ![alt text](<Screenshot 2026-07-09 222558-1.png>)
+  
 
 ## Hak Cipta
 
