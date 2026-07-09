@@ -58,3 +58,7 @@ npm run dev
 ### Catatan Penting
 - Admin Unit dapat mengakses `/admin` untuk mendaftarkan akun Kaprodi, Fakultas, dan LPPM secara manual.
 - Password default untuk pengguna yang didaftarkan secara manual adalah: `password123`.
+
+
+### Dokumentasi
+![alt text](image.png)
