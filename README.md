@@ -124,6 +124,22 @@ npm run dev
   ![alt text](<Screenshot 2026-07-09 222558-1.png>)
   ![alt text](<Screenshot 2026-07-09 222609-2.png>)
 
+  Tampilan revisi Proposal
+  ![alt text](image-6.png)
+  saat tombol perbaiki proposal di tekan, maka akan kembali ke form pengisian seperti di atas,
+  namun field field nya sudah terisi, jadi tidak perlu mengisi ulang
+  ![alt text](image-7.png)
+
+  Tampilan Approve Kaprodi
+  ![alt text](<Screenshot 2026-07-09 223818.png>)
+
+  Tampilan Approve Fakultas
+  ![alt text](image-8.png)
+
+  Tampilan Approve LPPM
+  ![alt text](image-9.png)
+  
+  
   
 
 ## Hak Cipta
