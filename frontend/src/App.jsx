@@ -19,6 +19,7 @@ function App() {
           <Route path="/complete-profile" element={<CompleteProfilePage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/pengajuan-proposal" element={<ProposalForm />} />
+          <Route path="/pengajuan-proposal/:id" element={<ProposalForm />} />
         </Routes>
       </Router>
     </GoogleOAuthProvider>

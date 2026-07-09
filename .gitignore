@@ -17,3 +17,7 @@ __pycache__/
 *.pyc
 venv/
 .venv/
+
+# Specific project files
+INSTRUKSI_BACKEND_PROPOSAL.md
+google.txt

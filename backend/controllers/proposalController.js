@@ -55,7 +55,7 @@ exports.createProposal = async (req, res) => {
 
 exports.getProposals = async (req, res) => {
   try {
-    const user = req.user;
+    const user = await User.findById(req.user.id);
     const all = await Proposal.find().populate('pengusul', 'name program_studi fakultas');
 
     let filtered = all;
@@ -88,7 +88,7 @@ exports.getProposalById = async (req, res) => {
     const proposal = await Proposal.findById(id).populate('pengusul', 'name program_studi fakultas');
     if (!proposal) return res.status(404).json({ error: 'Proposal tidak ditemukan' });
 
-    const user = req.user;
+    const user = await User.findById(req.user.id);
 
     // Authorization checks
     if (['dosen_tetap', 'dosen_lb'].includes(user.role)) {

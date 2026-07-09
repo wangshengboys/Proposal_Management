@@ -5,9 +5,9 @@ const StepUpload = ({ data, updateData }) => {
 
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
-      // Menyimpan file objek murni (dummy behavior, kita simpan nama dan ukurannya saja untuk display)
       const file = e.target.files[0];
       updateData({
+        file: file,
         name: file.name,
         size: (file.size / 1024 / 1024).toFixed(2) + ' MB',
         type: file.type
@@ -24,6 +24,7 @@ const StepUpload = ({ data, updateData }) => {
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const file = e.dataTransfer.files[0];
       updateData({
+        file: file,
         name: file.name,
         size: (file.size / 1024 / 1024).toFixed(2) + ' MB',
         type: file.type
