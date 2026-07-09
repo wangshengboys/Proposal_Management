@@ -130,6 +130,9 @@ npm run dev
   namun field field nya sudah terisi, jadi tidak perlu mengisi ulang
   ![alt text](image-7.png)
 
+  Tampilan Dashboard Approval (Kaprodi, Fakultas, LPPM) sama
+  ![alt text](image-10.png)
+
   Tampilan Approve Kaprodi
   ![alt text](<Screenshot 2026-07-09 223818.png>)
 
@@ -138,6 +141,7 @@ npm run dev
 
   Tampilan Approve LPPM
   ![alt text](image-9.png)
+
   
   
   
