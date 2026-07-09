@@ -61,4 +61,30 @@ npm run dev
 
 
 ### Dokumentasi
+Dashboard Super Admin
 ![alt text](image.png)
+
+Super Admin Bisa Menambahkan / Membuat Akun Admin Unit / Kaprodi / Fakultas / LPPM
+![alt text](image-1.png)
+
+Dashboard Admin Unit Bisa Melihat Proposal Yang Masuk namun tidak bisa memberikan Persetujuan
+![alt text](image-2.png)
+
+Admin Unit Juga bisa membuat akun kaprodi,fakultas,lppm
+akun kaprodi hanya bisa dibuat 1 sesuai jurusan, (misal jurusan ada 7 maka bisa ada 7 akun kaprodi untuk masing masing jurusan)
+begitu juga dengan akun fakultas(misal fakultas ada 3 maka bisa ada 3 akun fakultas untuk masing masing fakultas)
+akun lppm hanya bisa dibuat 1
+![alt text](image-3.png)
+
+Tampilan detail proposal dari akun admin
+!["alt text"](image-4.png)
+
+tampilan Dashboard Pengusul
+![alt text](image-5.png)
+
+Form Isian Pengusul
+![alt text](<Screenshot 2026-07-09 222319.png>)
+![alt text](<Screenshot 2026-07-09 222431.png>)
+![alt text](<Screenshot 2026-07-09 222509.png>)
+![alt text](<Screenshot 2026-07-09 222558.png>)
+![alt text](<Screenshot 2026-07-09 222609.png>)
